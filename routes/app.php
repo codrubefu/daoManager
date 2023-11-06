@@ -1,19 +1,35 @@
 <?php
 
 
+use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Club\ClubController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware(['auth:sanctum','can:create-users'])->group(function () {
+Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
     Route::get(
         '/dashboard',
         [DashboardController::class, 'index']
     );
 
-//    Route::post(
-//        '/users',
-//        [\App\Http\Controllers\UserController::class, 'store']
-//    );
+    Route::post(
+        '/user',
+        [UserController::class, 'update']
+    );
 });
+
+Route::middleware(['auth:sanctum', 'can:manage-club'])->group(function () {
+    Route::get(
+        '/club/add',
+        [ClubController::class, 'add']
+    );
+
+    Route::post(
+        '/club/edit',
+        [UserController::class, 'edit']
+    );
+});
+
+
 

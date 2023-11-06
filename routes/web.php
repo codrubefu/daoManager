@@ -17,3 +17,5 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+Route::get('/update_user', [\App\Http\Controllers\SetUserModeController::class,'index']);
+
