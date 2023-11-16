@@ -19,17 +19,5 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
     );
 });
 
-Route::middleware(['auth:sanctum', 'can:manage-club'])->group(function () {
-    Route::get(
-        '/club/add',
-        [ClubController::class, 'add']
-    );
-
-    Route::post(
-        '/club/edit',
-        [UserController::class, 'edit']
-    );
-});
-
 
 
