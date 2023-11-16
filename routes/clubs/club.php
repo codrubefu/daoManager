@@ -13,12 +13,28 @@ Route::middleware(['auth:sanctum', 'can:manage-clubs'])->group(function () {
     );
 
     Route::post(
-        '/club/edit',
-        [UserController::class, 'edit']
+        '/club/edit/{id}',
+        [ClubController::class, 'edit']
     );
 
     Route::get(
         '/clubs',
         [ClubController::class, 'list']
+    );
+
+
+    Route::get(
+        '/club/{id}',
+        [ClubController::class, 'get']
+    );
+
+    Route::get(
+        '/club/deactivate/{id}',
+        [ClubController::class, 'deactivate']
+    );
+
+    Route::get(
+        '/club/activate/{id}',
+        [ClubController::class, 'activate']
     );
 });
