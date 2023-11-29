@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Club;
 
+use App\Http\Controllers\Controller;
 use App\Models\Club;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 
-class ClubController
+class ClubController extends Controller
 {
     public function get(Club $club, Request $request): Club
     {

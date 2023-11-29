@@ -21,3 +21,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 require __DIR__.'/auth.php';
 require __DIR__.'/app.php';
 require __DIR__.'/clubs/club.php';
+require __DIR__.'/users/user.php';
+require __DIR__.'/training_classes/training_classes.php';

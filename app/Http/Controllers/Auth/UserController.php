@@ -4,33 +4,67 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function update(Request $request): User
-    {
-        $request->validate([
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class]
-        ]);
 
-        $user = $request->user();
+
+    public function add(Request $request, UserService $userService): User|JsonResponse
+    {
+        $validate = $userService->validate($request);
+        if ($validate !== true) {
+            return $validate;
+        }
+        $user = new User();
+
         foreach ($request->all() as $key => $value) {
             $user->{$key} = $value;
         }
-        $user->email = $request->email;
+
+        $user->password = Hash::make(rand(100000, 999999));
+
+        $parentUser = $request->user();
+        $user->club_id = $parentUser->club_id;
+
         $user->save();
 
         return $user;
     }
+
+    public function update(User $user, Request $request, UserService $userService): JsonResponse|User
+    {
+        $validate = $userService->validate($request);
+
+        if ($validate !== true) {
+            return $validate;
+        }
+
+        $user = $user::find($request->id);
+
+        foreach ($request->all() as $key => $value) {
+            $user->{$key} = $value;
+        }
+
+        $user->save();
+
+        return $user;
+    }
+
+
+    public function list(Request $request): array
+    {
+        $parentUser = $request->user();
+        $users = User::where('club_id', $parentUser->club_id)->get();
+        return $users->toArray();
+    }
+
+    public function getUser(User $user, Request $request): User
+    {
+        return $user::find($request->id);
+    }
+
 }
