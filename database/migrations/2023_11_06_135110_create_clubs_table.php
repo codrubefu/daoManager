@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club', function (Blueprint $table) {
+        Schema::create('clubs', function (Blueprint $table) {
             $table->string('name');
             $table->string('city')->nullable();
             $table->string('country')->nullable();
@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->integer('phone')->nullable();
             $table->string('cui')->nullable();
+            $table->string('updated_at')->nullable();
+            $table->date('updated_at');
+            $table->date('created_at');
         });
     }
 

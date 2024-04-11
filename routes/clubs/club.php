@@ -6,7 +6,7 @@ use App\Http\Controllers\Club\ClubController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware(['auth:sanctum', 'can:manage-clubs'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::post(
         '/club/add',
         [ClubController::class, 'add']

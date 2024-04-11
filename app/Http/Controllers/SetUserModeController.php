@@ -8,7 +8,7 @@ class SetUserModeController
 {
     public function index()
     {
-        $user=User::find(3);
+        $user=User::find(20);
         $user->assignRole('superAdmin');
         $user->save();
 

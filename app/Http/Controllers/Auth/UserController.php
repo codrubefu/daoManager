@@ -57,8 +57,14 @@ class UserController extends Controller
 
     public function list(Request $request): array
     {
+
         $parentUser = $request->user();
+
+        if($parentUser->club_id == null){
+            return [];
+        }
         $users = User::where('club_id', $parentUser->club_id)->get();
+
         return $users->toArray();
     }
 
