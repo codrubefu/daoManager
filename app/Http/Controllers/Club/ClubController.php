@@ -4,70 +4,50 @@ namespace App\Http\Controllers\Club;
 
 use App\Http\Controllers\Controller;
 use App\Models\Club;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use App\Http\Requests\ClubRequest;
+use Illuminate\Http\Request;
 
 class ClubController extends Controller
 {
-    public function get(Club $club, Request $request): Club
+    private function findClub(Request $request): Club
     {
-        return $club::find($request->id);
+        return Club::find($request->id);
     }
 
-    public function add(Request $request, Club $club): Club
+    public function get(Request $request): Club
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'country' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:50'],
-            'cui' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . $club::class],
-        ]);
-
-        $createdClub = $club::create($request->all());
-        return $createdClub;
-
+        return $this->findClub($request);
     }
 
-    public function edit(Club $club, Request $request): Club
+    public function add(ClubRequest $request): Club
     {
-        $club = $club::find($request->id);
+        return Club::create($request->validated());
+    }
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'country' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:50'],
-            'cui' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . $club::class . ',email,' . $club->id],
-        ]);
-
-        $club->update($request->all());
-
+    public function edit(Request $request, ClubRequest $clubRequest): Club
+    {
+        $club = $this->findClub($request);
+        $club->update($clubRequest->validated());
         return $club;
     }
 
-    public function deactivate(Club $club, Request $request): Collection
+    public function deactivate(Request $request): Collection
     {
-        $club = $club::find($request->id);
-        $club->active = false;
-        $club->save();
-        return $club::all();
+        $club = $this->findClub($request);
+        $club->update(['active' => false]);
+        return Club::all();
     }
 
-    public function activate(Club $club, Request $request): Collection
+    public function activate(Request $request): Collection
     {
-        $club = $club::find($request->id);
-        $club->active = true;
-        $club->save();
-        return $club::all();
+        $club = Club::find($request->id);
+        $club->update(['active' => true]);
+        return Club::all();
     }
 
-    public function list(Club $club): Collection
+    public function list(): Collection
     {
-        return $club::all();
+        return Club::all();
     }
 }

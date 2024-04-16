@@ -27,7 +27,9 @@ class Club extends Model
         'country',
         'address',
         'phone',
-        'cui'
+        'cui',
+        'zip',
+        'active'
     ];
 
 }
