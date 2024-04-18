@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
+use App\Models\Club;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -12,65 +14,50 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
-
-    public function add(Request $request, UserService $userService): User|JsonResponse
+    public function add(UserRequest $userRequest): User
     {
-        $validate = $userService->validate($request);
-        if ($validate !== true) {
-            return $validate;
-        }
-        $user = new User();
-
-        foreach ($request->all() as $key => $value) {
-            $user->{$key} = $value;
-        }
-
-        $user->password = Hash::make(rand(100000, 999999));
-
-        $parentUser = $request->user();
-        $user->club_id = $parentUser->club_id;
-
-        $user->save();
-
-        return $user;
+        return User::create($userRequest->validated());
     }
 
-    public function update(User $user, Request $request, UserService $userService): JsonResponse|User
+    public function edit(Request $request, UserRequest $userRequest): User
     {
-        $validate = $userService->validate($request);
-
-        if ($validate !== true) {
-            return $validate;
-        }
-
-        $user = $user::find($request->id);
-
-        foreach ($request->all() as $key => $value) {
-            $user->{$key} = $value;
-        }
-
-        $user->save();
-
+        $user = $this->getUser($request);
+        $user->update($userRequest->validated());
         return $user;
     }
-
 
     public function list(Request $request): array
     {
 
         $parentUser = $request->user();
 
-        if($parentUser->club_id == null){
+        if ($parentUser->club_id == null) {
             return [];
         }
+
         $users = User::where('club_id', $parentUser->club_id)->get();
 
         return $users->toArray();
     }
 
-    public function getUser(User $user, Request $request): User
+    public function getUser(Request $request): User
     {
-        return $user::find($request->id);
+        $user = User::where(
+            [
+                'id' => $request->id,
+                'club_id' => $request->user()->club_id
+            ]
+        )->first();
+
+        abort_if(!$user, 404, 'User not found');
+        return $user;
+    }
+
+    public function delete(Request $request): JsonResponse
+    {
+        $user = $this->getUser($request);
+        $user->delete();
+        return new JsonResponse(null, 204);
     }
 
 }

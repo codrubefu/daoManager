@@ -14,7 +14,7 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
 
     Route::post(
         '/user/edit/{id}',
-        [UserController::class, 'update']
+        [UserController::class, 'edit']
     );
     Route::get(
         '/users',
@@ -24,5 +24,9 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
     Route::get(
         '/user/{id}',
         [UserController::class, 'getUser']
+    );
+    Route::delete(
+        '/user/delete/{id}',
+        [UserController::class, 'delete']
     );
 });
