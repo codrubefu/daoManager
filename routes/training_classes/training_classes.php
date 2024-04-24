@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
     Route::post(
         '/training_class/add',
-        [TrainingClassesController::class, 'addOrEdit']
+        [TrainingClassesController::class, 'add']
     );
 
     Route::post(

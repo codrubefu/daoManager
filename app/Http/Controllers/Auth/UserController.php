@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
-use App\Models\Club;
 use App\Models\User;
-use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -58,6 +55,19 @@ class UserController extends Controller
         $user = $this->getUser($request);
         $user->delete();
         return new JsonResponse(null, 204);
+    }
+
+    public function getCurrentUser(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $info = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'club_id' => $user->club_id,
+            'role' => $user->getRoleNames()->first()
+        ];
+        return new JsonResponse($info, 200);
     }
 
 }

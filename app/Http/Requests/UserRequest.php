@@ -2,15 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\ValidatedTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
+    Use ValidatedTrait;
+
     public function rules()
     {
-
-        $rules = [
+        return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'title' => [],
@@ -34,19 +36,7 @@ class UserRequest extends FormRequest
                 }),
             ],
         ];
-
-        return $rules;
     }
-
-    public function validated($key = null, $default = null)
-    {
-        $validated = parent::validated();
-        $validated['club_id'] = $this->user()->club_id ?? '';
-
-        return $validated;
-    }
-
-
 
     public function messages(): array
     {

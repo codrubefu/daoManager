@@ -25,8 +25,14 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
         '/user/{id}',
         [UserController::class, 'getUser']
     );
+
     Route::delete(
         '/user/delete/{id}',
         [UserController::class, 'delete']
+    );
+
+    Route::get(
+        '/currentUser',
+        [UserController::class, 'getCurrentUser']
     );
 });
