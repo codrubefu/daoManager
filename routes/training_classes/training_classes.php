@@ -13,15 +13,16 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
 
     Route::post(
         '/training_class/edit/{id}',
-        [TrainingClassesController::class, 'addOrEdit']
+        [TrainingClassesController::class, 'edit']
     );
 
     Route::post(
         '/training_class/add_users/{id}',
         [TrainingClassesController::class, 'addUsers']
     );
+
     Route::get(
-        '/training_classes',
+        '/training_class/list/',
         [TrainingClassesController::class, 'list']
     );
 
@@ -31,7 +32,7 @@ Route::middleware(['auth:sanctum', 'can:manage-users'])->group(function () {
     );
 
     Route::delete(
-        '/training_class/{id}',
+        '/training_class/delete/{id}',
         [TrainingClassesController::class, 'delete']
     );
 });
