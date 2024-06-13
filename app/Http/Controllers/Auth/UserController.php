@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,17 @@ class UserController extends Controller
 
     public function add(UserRequest $userRequest): User
     {
-        return User::create($userRequest->validated());
+        $group = Group::where('id', $userRequest->group_id)
+            ->where('club_id', $userRequest->user()->club_id)
+            ->first();
+
+        abort_if(!$group, 404, 'Group not found');
+
+        $user = new User($userRequest->validated());
+        $user->group()->associate($group);
+        $user->save();
+
+        return $user;
     }
 
     public function edit(Request $request, UserRequest $userRequest): User
@@ -32,7 +43,9 @@ class UserController extends Controller
             return [];
         }
 
-        $users = User::where('club_id', $parentUser->club_id)->get();
+        $users = User::where('club_id', $parentUser->club_id)
+            ->with('group')
+            ->get();
 
         return $users->toArray();
     }

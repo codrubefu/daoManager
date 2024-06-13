@@ -27,4 +27,14 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        dd($exception);
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
+
+        return parent::render($request, $exception);
+    }
 }

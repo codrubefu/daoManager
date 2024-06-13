@@ -9,8 +9,6 @@ use Illuminate\Validation\ValidationException;
 
 class TrainingClassesRequest extends FormRequest
 {
-    use ValidatedTrait;
-
     private HelpFunctionService $helpFunctionService;
 
     public function __construct(HelpFunctionService $helpFunctionService)

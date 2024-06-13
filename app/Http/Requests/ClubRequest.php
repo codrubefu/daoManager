@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\ValidatedTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ClubRequest extends FormRequest
 {
+
     public function rules()
     {
         $rules = [
