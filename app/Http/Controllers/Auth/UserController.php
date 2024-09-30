@@ -8,6 +8,7 @@ use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -34,17 +35,12 @@ class UserController extends Controller
         return $user;
     }
 
-    public function list(Request $request): array
+    public function list(Request $request, User $user): array
     {
 
         $parentUser = $request->user();
 
-        if ($parentUser->club_id == null) {
-            return [];
-        }
-
-        $users = User::where('club_id', $parentUser->club_id)
-            ->with('group')
+        $users = $user->with('group')
             ->get();
 
         return $users->toArray();
@@ -54,8 +50,7 @@ class UserController extends Controller
     {
         $user = User::where(
             [
-                'id' => $request->id,
-                'club_id' => $request->user()->club_id
+                'id' => $request->id
             ]
         )->first();
 
@@ -73,13 +68,19 @@ class UserController extends Controller
     public function getCurrentUser(Request $request): JsonResponse
     {
         $user = $request->user();
-        $info = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'club_id' => $user->club_id,
-            'role' => $user->getRoleNames()->first()
-        ];
+        $sessionId = $request->session()->getId();
+        $cacheKey = 'current_user_' . $sessionId;
+
+        $info = Cache::remember($cacheKey, 60, function () use ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->first_name . ' ' . $user->last_name,
+                'email' => $user->email,
+                'club_id' => $user->club_id,
+                'role' => $user->getRoleNames()->first()
+            ];
+        });
+
         return new JsonResponse($info, 200);
     }
 

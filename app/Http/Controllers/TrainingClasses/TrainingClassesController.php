@@ -38,13 +38,10 @@ class TrainingClassesController extends Controller
     }
 
 
-    public function list(Request $request): Collection|array
+    public function list(Request $request,TrainingClasses $trainingClasses): Collection|array
     {
         $parentUser = $request->user();
-        if ($parentUser->club_id == null) {
-            return [];
-        }
-        return TrainingClasses::where('club_id', $parentUser->club_id)->get();
+        return $trainingClasses->get();
     }
 
     public function delete(Request $request): JsonResponse
@@ -52,5 +49,10 @@ class TrainingClassesController extends Controller
         $TrainingClass = $this->get($request);
         $TrainingClass->delete();
         return new JsonResponse(null, 204);
+    }
+
+    public function addUserToTrainingClass(Request $request)
+    {
+        dd($request);
     }
 }

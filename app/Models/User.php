@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Scopes\ClubScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -64,5 +65,10 @@ class User extends Authenticatable
     public function trainings():BelongsToMany
     {
         return $this->belongsToMany(TrainingClasses::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new ClubScope());
     }
 }
