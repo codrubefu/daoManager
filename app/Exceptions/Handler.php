@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
     {
         dd($exception);
         if ($request->expectsJson() || $request->is('api/*')) {
-            return response()->json(['error' => 'Something went wrong.'], 500);
+            return response()->json(['error' => 'Something went wrong.'], 403);
         }
 
         return parent::render($request, $exception);

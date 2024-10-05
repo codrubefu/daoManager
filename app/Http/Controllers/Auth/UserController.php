@@ -38,9 +38,9 @@ class UserController extends Controller
     public function list(Request $request, User $user): array
     {
 
-        $parentUser = $request->user();
 
         $users = $user->with('group')
+            ->orderBy('first_name', 'asc')
             ->get();
 
         return $users->toArray();
@@ -68,6 +68,11 @@ class UserController extends Controller
     public function getCurrentUser(Request $request): JsonResponse
     {
         $user = $request->user();
+
+        if(!$user) {
+            return new JsonResponse(null, 204);
+        }
+
         $sessionId = $request->session()->getId();
         $cacheKey = 'current_user_' . $sessionId;
 

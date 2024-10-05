@@ -24,17 +24,19 @@ class TrainingClassesController extends Controller
         return $trainingClass;
     }
 
-    public function get(Request $request): TrainingClasses
+    public function get(Request $request,TrainingClasses $trainingClasses): TrainingClasses
     {
-        $TrainingClass = TrainingClasses::where(
-            [
-                'id' => $request->id,
-                'club_id' => $request->user()->club_id
-            ]
-        )->first();
+        $TrainingClass = $trainingClasses->where([
+            'id' => $request->id,
+            'club_id' => $request->user()->club_id
+        ])->first();
 
-        abort_if(!$TrainingClass, 404, 'Training not found');
-        return $TrainingClass;
+        if ($TrainingClass) {
+            $TrainingClass->user_ids = $TrainingClass->users()->pluck('users.id');
+            return $TrainingClass;
+        } else {
+            abort(404, 'Training not found');
+        }        return $TrainingClass;
     }
 
 
@@ -51,8 +53,19 @@ class TrainingClassesController extends Controller
         return new JsonResponse(null, 204);
     }
 
-    public function addUserToTrainingClass(Request $request)
+    public function addUserToTrainingClass(Request $request,TrainingClasses $trainingClasses): JsonResponse
     {
-        dd($request);
+        $trainingClassId = $request->trainingId;
+        $userId = $request->userId;
+
+        $trainingClass = $trainingClasses->findOrFail($trainingClassId);
+        try {
+            $trainingClass->users()->attach($userId, ['date' => now()->toDateString()]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'User already added to this training class'], 400);
+        }
+
+
+        return new JsonResponse(null, 204);
     }
 }
